@@ -3,6 +3,7 @@ import { BreathingCircle } from "@/components/BreathingCircle";
 import { IntervalSettings } from "@/components/IntervalSettings";
 import { Button } from "@/components/ui/button";
 import { Settings2, ArrowLeft } from "lucide-react";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   const [isBreathing, setIsBreathing] = useState(false);
@@ -107,6 +108,7 @@ const Index = () => {
           />
         </div>
       )}
+      <Footer />
     </div>
   );
 };
