@@ -26,9 +26,9 @@ export default {
         foreground: "hsl(var(--foreground))",
         breathing: {
           dark: "#1A1F2C",
-          primary: "#9B87F5",
-          secondary: "#7E69AB",
-          accent: "#D6BCFA",
+          primary: "#33C3F0",
+          secondary: "#D3E4FD",
+          accent: "#0EA5E9",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",

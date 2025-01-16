@@ -66,6 +66,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-breathing-dark flex flex-col items-center justify-center p-4">
+      <div className="fixed top-0 left-0 right-0 flex flex-col items-center pt-8 pb-4 bg-gradient-to-b from-breathing-dark to-transparent">
+        <img src="/logo.svg" alt="Inhale.Lovable Logo" className="w-16 h-16 mb-2" />
+        <h1 className="text-2xl font-light text-white tracking-wider">Inhale.Lovable</h1>
+      </div>
+
       {!showSettings ? (
         <>
           <Button
@@ -76,12 +81,14 @@ const Index = () => {
           >
             <Settings2 className="h-6 w-6" />
           </Button>
-          <BreathingCircle
-            isBreathing={isBreathing}
-            phase={phase}
-            onLongPress={stopBreathing}
-            onStart={startBreathing}
-          />
+          <div className="mt-24">
+            <BreathingCircle
+              isBreathing={isBreathing}
+              phase={phase}
+              onLongPress={stopBreathing}
+              onStart={startBreathing}
+            />
+          </div>
           {isBreathing && (
             <div className="mt-8 text-white text-lg animate-fade-in">
               Cycle {currentCycle}
@@ -98,7 +105,7 @@ const Index = () => {
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back
           </Button>
-          <div className="mt-16">
+          <div className="mt-24">
             <IntervalSettings
               {...settings}
               onUpdate={handleSettingsUpdate}
