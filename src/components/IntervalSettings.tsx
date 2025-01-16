@@ -26,7 +26,7 @@ export const IntervalSettings = ({
             max={10}
             step={1}
             onValueChange={(value) => onUpdate("inhaleTime", value[0])}
-            className="w-full"
+            className="w-full [&_.absolute]:bg-breathing-accent"
           />
         </div>
 
@@ -38,7 +38,7 @@ export const IntervalSettings = ({
             max={10}
             step={1}
             onValueChange={(value) => onUpdate("holdTime", value[0])}
-            className="w-full"
+            className="w-full [&_.absolute]:bg-breathing-accent"
           />
         </div>
 
@@ -50,7 +50,7 @@ export const IntervalSettings = ({
             max={10}
             step={1}
             onValueChange={(value) => onUpdate("exhaleTime", value[0])}
-            className="w-full"
+            className="w-full [&_.absolute]:bg-breathing-accent"
           />
         </div>
 
@@ -62,7 +62,7 @@ export const IntervalSettings = ({
             max={10}
             step={1}
             onValueChange={(value) => onUpdate("cycles", value[0])}
-            className="w-full"
+            className="w-full [&_.absolute]:bg-breathing-accent"
           />
         </div>
       </div>

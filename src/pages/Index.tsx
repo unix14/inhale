@@ -31,12 +31,8 @@ const Index = () => {
             // Exhale phase
             setPhase("exhale");
             timer = setTimeout(() => {
-              if (currentCycle < settings.cycles) {
-                setCurrentCycle(prev => prev + 1);
-                breathingCycle();
-              } else {
-                stopBreathing();
-              }
+              setCurrentCycle(prev => prev + 1);
+              breathingCycle();
             }, settings.exhaleTime * 1000);
           }, settings.holdTime * 1000);
         }, settings.inhaleTime * 1000);
@@ -48,7 +44,7 @@ const Index = () => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [isBreathing, currentCycle, settings]);
+  }, [isBreathing, settings]);
 
   const startBreathing = () => {
     setIsBreathing(true);
@@ -88,7 +84,7 @@ const Index = () => {
           />
           {isBreathing && (
             <div className="mt-8 text-white text-lg animate-fade-in">
-              Cycle {currentCycle} of {settings.cycles}
+              Cycle {currentCycle}
             </div>
           )}
         </>
@@ -96,16 +92,18 @@ const Index = () => {
         <div className="w-full max-w-md p-4">
           <Button
             variant="ghost"
-            className="mb-8 text-white hover:text-breathing-accent"
+            className="mb-8 text-white hover:text-breathing-accent absolute top-4 left-4"
             onClick={() => setShowSettings(false)}
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back
           </Button>
-          <IntervalSettings
-            {...settings}
-            onUpdate={handleSettingsUpdate}
-          />
+          <div className="mt-16">
+            <IntervalSettings
+              {...settings}
+              onUpdate={handleSettingsUpdate}
+            />
+          </div>
         </div>
       )}
       <Footer />

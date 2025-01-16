@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface BreathingCircleProps {
@@ -15,33 +15,16 @@ export const BreathingCircle = ({
   onStart,
 }: BreathingCircleProps) => {
   const [isPressed, setIsPressed] = useState(false);
-  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
   const [progress, setProgress] = useState(0);
+  const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    let progressInterval: NodeJS.Timeout;
-
-    if (isPressed) {
-      const startTime = Date.now();
-      const duration = 2000; // 2 seconds for long press
-
-      progressInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const newProgress = Math.min((elapsed / duration) * 100, 100);
-        setProgress(newProgress);
-
-        if (newProgress === 100) {
-          onLongPress();
-          setIsPressed(false);
-          clearInterval(progressInterval);
-        }
-      }, 50);
-    }
-
     return () => {
-      if (progressInterval) clearInterval(progressInterval);
+      if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
     };
-  }, [isPressed, onLongPress]);
+  }, []);
 
   const handleMouseDown = () => {
     if (!isBreathing) {
@@ -51,11 +34,27 @@ export const BreathingCircle = ({
     
     setIsPressed(true);
     setProgress(0);
+
+    const startTime = Date.now();
+    const duration = 2000; // 2 seconds for long press
+
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
+      setProgress(newProgress);
+
+      if (newProgress === 100) {
+        onLongPress();
+        setIsPressed(false);
+        if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      }
+    }, 50);
   };
 
   const handleMouseUp = () => {
     setIsPressed(false);
     setProgress(0);
+    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
   };
 
   const getPhaseText = () => {
@@ -64,7 +63,7 @@ export const BreathingCircle = ({
   };
 
   const getCircleStyles = () => {
-    const baseStyles = "transition-all duration-1000 ease-in-out";
+    const baseStyles = "transition-all duration-2000 ease-in-out";
     
     if (!isBreathing) return baseStyles;
     
@@ -83,7 +82,7 @@ export const BreathingCircle = ({
   const getProgressStyle = () => {
     if (isPressed) {
       return {
-        background: `conic-gradient(white ${progress}%, transparent ${progress}%)`,
+        background: `conic-gradient(#D6BCFA ${progress}%, transparent ${progress}%)`,
       };
     }
     return {};
