@@ -88,7 +88,7 @@ const Index = () => {
         <div className="w-full max-w-md p-4">
           <Button
             variant="ghost"
-            className="mb-8 text-white hover:text-breathing-accent hover:bg-breathing-dark/50 absolute top-4 left-4"
+            className="fixed top-4 left-4 z-50 text-white hover:text-breathing-accent hover:bg-breathing-dark/50"
             onClick={() => setShowSettings(false)}
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
