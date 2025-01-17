@@ -4,6 +4,7 @@ import { IntervalSettings } from "@/components/IntervalSettings";
 import { Button } from "@/components/ui/button";
 import { Settings2, ArrowLeft } from "lucide-react";
 import Footer from "@/components/Footer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Index = () => {
   const [isBreathing, setIsBreathing] = useState(false);
@@ -20,13 +21,10 @@ const Index = () => {
 
     if (isBreathing) {
       const breathingCycle = () => {
-        // Inhale phase
         setPhase("inhale");
         timer = setTimeout(() => {
-          // Hold phase
           setPhase("hold");
           timer = setTimeout(() => {
-            // Exhale phase
             setPhase("exhale");
             timer = setTimeout(() => {
               breathingCycle();
@@ -65,19 +63,17 @@ const Index = () => {
         <>
           <div className="fixed top-0 left-0 right-0 flex justify-between items-center px-6 pt-8 pb-4 bg-gradient-to-b from-breathing-dark to-transparent">
             <div className="flex items-center gap-3">
+              <img src="/logo.svg" alt="Inhale.Lovable Logo" className="w-8 h-8" />
               <h1 className="text-2xl font-light text-white tracking-wider">Inhale.Lovable</h1>
             </div>
-            <div className="flex items-center gap-4">
-              <img src="/logo.svg" alt="Inhale.Lovable Logo" className="w-12 h-12" />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:text-breathing-accent"
-                onClick={() => setShowSettings(true)}
-              >
-                <Settings2 className="h-6 w-6" />
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:text-breathing-accent hover:bg-breathing-dark/50"
+              onClick={() => setShowSettings(true)}
+            >
+              <Settings2 className="h-6 w-6" />
+            </Button>
           </div>
           <div className="mt-24">
             <BreathingCircle
@@ -92,22 +88,24 @@ const Index = () => {
         <div className="w-full max-w-md p-4">
           <Button
             variant="ghost"
-            className="mb-8 text-white hover:text-breathing-accent absolute top-4 left-4"
+            className="mb-8 text-white hover:text-breathing-accent hover:bg-breathing-dark/50 absolute top-4 left-4"
             onClick={() => setShowSettings(false)}
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back
           </Button>
-          <div className="fixed top-0 left-0 right-0 flex flex-col items-center pt-8 pb-4 bg-gradient-to-b from-breathing-dark to-transparent">
-            <img src="/logo.svg" alt="Inhale.Lovable Logo" className="w-16 h-16 mb-2" />
-            <h1 className="text-2xl font-light text-white tracking-wider">Inhale.Lovable</h1>
-          </div>
-          <div className="mt-24">
-            <IntervalSettings
-              {...settings}
-              onUpdate={handleSettingsUpdate}
-            />
-          </div>
+          <ScrollArea className="h-[calc(100vh-8rem)] px-4">
+            <div className="fixed top-0 left-0 right-0 flex flex-col items-center pt-8 pb-4 bg-gradient-to-b from-breathing-dark to-transparent">
+              <img src="/logo.svg" alt="Inhale.Lovable Logo" className="w-16 h-16 mb-2" />
+              <h1 className="text-2xl font-light text-white tracking-wider">Inhale.Lovable</h1>
+            </div>
+            <div className="mt-32">
+              <IntervalSettings
+                {...settings}
+                onUpdate={handleSettingsUpdate}
+              />
+            </div>
+          </ScrollArea>
         </div>
       )}
       <Footer />
