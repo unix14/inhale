@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Settings2, ArrowLeft } from "lucide-react";
 import Footer from "@/components/Footer";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { audioManager } from "@/utils/audioUtils";
 
 const Index = () => {
   const [isBreathing, setIsBreathing] = useState(false);
@@ -17,16 +18,34 @@ const Index = () => {
   });
 
   useEffect(() => {
+    // Load audio files when the component mounts
+    const loadAudio = async () => {
+      await audioManager.loadSound('inhale', '/sounds/inhale.mp3');
+      await audioManager.loadSound('hold', '/sounds/hold.mp3');
+      await audioManager.loadSound('exhale', '/sounds/exhale.mp3');
+      await audioManager.loadSound('complete', '/sounds/complete.mp3');
+    };
+    loadAudio();
+  }, []);
+
+  useEffect(() => {
     let timer: NodeJS.Timeout;
 
     if (isBreathing) {
       const breathingCycle = () => {
         setPhase("inhale");
+        audioManager.playSound('inhale');
+        
         timer = setTimeout(() => {
           setPhase("hold");
+          audioManager.playSound('hold');
+          
           timer = setTimeout(() => {
             setPhase("exhale");
+            audioManager.playSound('exhale');
+            
             timer = setTimeout(() => {
+              audioManager.playSound('complete');
               breathingCycle();
             }, settings.exhaleTime * 1000);
           }, settings.holdTime * 1000);
