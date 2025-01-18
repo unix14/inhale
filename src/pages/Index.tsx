@@ -38,14 +38,14 @@ const Index = () => {
         
         timer = setTimeout(() => {
           setPhase("hold");
-          audioManager.playSound('hold');
+          audioManager.stopSound();
           
           timer = setTimeout(() => {
             setPhase("exhale");
             audioManager.playSound('exhale');
             
             timer = setTimeout(() => {
-              audioManager.playSound('complete');
+              audioManager.stopSound();
               breathingCycle();
             }, settings.exhaleTime * 1000);
           }, settings.holdTime * 1000);
@@ -57,6 +57,7 @@ const Index = () => {
 
     return () => {
       if (timer) clearTimeout(timer);
+      audioManager.stopSound();
     };
   }, [isBreathing, settings]);
 

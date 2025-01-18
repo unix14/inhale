@@ -35,7 +35,7 @@ class AudioManager {
     }
   }
 
-  playSound(type: 'inhale' | 'hold' | 'exhale'): void {
+  playSound(type: 'inhale' | 'exhale'): void {
     if (!this.audioContext || !this.gainNode || this.isMuted) return;
 
     this.stopCurrentSound();
@@ -43,16 +43,13 @@ class AudioManager {
     try {
       this.currentOscillator = this.audioContext.createOscillator();
       
-      // Set frequency based on the breathing phase
+      // Set frequency based on the breathing phase - using more gentle frequencies
       switch (type) {
         case 'inhale':
-          this.currentOscillator.frequency.setValueAtTime(396, this.audioContext.currentTime); // G4 note
-          break;
-        case 'hold':
-          this.currentOscillator.frequency.setValueAtTime(417, this.audioContext.currentTime); // G#4 note
+          this.currentOscillator.frequency.setValueAtTime(174.61, this.audioContext.currentTime); // F3 note - very gentle
           break;
         case 'exhale':
-          this.currentOscillator.frequency.setValueAtTime(352, this.audioContext.currentTime); // F4 note
+          this.currentOscillator.frequency.setValueAtTime(164.81, this.audioContext.currentTime); // E3 note - slightly lower
           break;
       }
 
@@ -62,7 +59,7 @@ class AudioManager {
       // Apply smooth fade in
       this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
       this.gainNode.gain.linearRampToValueAtTime(
-        this.volume * 0.2, // Reduce volume for comfort
+        this.volume * 0.1, // Reduce volume further for gentler sound
         this.audioContext.currentTime + 0.1
       );
 
@@ -89,7 +86,7 @@ class AudioManager {
   setVolume(volume: number): void {
     this.volume = Math.max(0, Math.min(1, volume));
     if (this.gainNode && this.currentOscillator) {
-      this.gainNode.gain.setValueAtTime(this.volume * 0.2, this.audioContext.currentTime);
+      this.gainNode.gain.setValueAtTime(this.volume * 0.1, this.audioContext.currentTime);
     }
   }
 
