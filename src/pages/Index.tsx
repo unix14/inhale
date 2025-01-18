@@ -18,17 +18,6 @@ const Index = () => {
   });
 
   useEffect(() => {
-    // Load audio files when the component mounts
-    const loadAudio = async () => {
-      await audioManager.loadSound('inhale', '/sounds/inhale.mp3');
-      await audioManager.loadSound('hold', '/sounds/hold.mp3');
-      await audioManager.loadSound('exhale', '/sounds/exhale.mp3');
-      await audioManager.loadSound('complete', '/sounds/complete.mp3');
-    };
-    loadAudio();
-  }, []);
-
-  useEffect(() => {
     let timer: NodeJS.Timeout;
 
     if (isBreathing) {
