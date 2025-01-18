@@ -22,17 +22,21 @@ const Index = () => {
 
     if (isBreathing) {
       const breathingCycle = () => {
+        // Start inhale phase
         setPhase("inhale");
         audioManager.playSound('inhale');
         
+        // Transition to hold phase
         timer = setTimeout(() => {
           setPhase("hold");
           audioManager.stopSound();
           
+          // Transition to exhale phase
           timer = setTimeout(() => {
             setPhase("exhale");
             audioManager.playSound('exhale');
             
+            // Complete cycle
             timer = setTimeout(() => {
               audioManager.stopSound();
               breathingCycle();
