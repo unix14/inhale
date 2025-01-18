@@ -43,23 +43,23 @@ class AudioManager {
     try {
       this.currentOscillator = this.audioContext.createOscillator();
       
-      // Set frequency based on the breathing phase - using more gentle frequencies
+      // Adjusted frequencies for better distinction between inhale and exhale
       switch (type) {
         case 'inhale':
-          this.currentOscillator.frequency.setValueAtTime(174.61, this.audioContext.currentTime); // F3 note - very gentle
+          this.currentOscillator.frequency.setValueAtTime(196.00, this.audioContext.currentTime); // G3 note - slightly higher for inhale
           break;
         case 'exhale':
-          this.currentOscillator.frequency.setValueAtTime(164.81, this.audioContext.currentTime); // E3 note - slightly lower
+          this.currentOscillator.frequency.setValueAtTime(164.81, this.audioContext.currentTime); // E3 note - lower for exhale
           break;
       }
 
       // Use sine wave for a smoother, more meditative sound
       this.currentOscillator.type = 'sine';
       
-      // Apply smooth fade in
+      // Increased volume for better audibility
       this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
       this.gainNode.gain.linearRampToValueAtTime(
-        this.volume * 0.1, // Reduce volume further for gentler sound
+        this.volume * 0.2, // Doubled the volume from previous 0.1
         this.audioContext.currentTime + 0.1
       );
 
@@ -86,7 +86,7 @@ class AudioManager {
   setVolume(volume: number): void {
     this.volume = Math.max(0, Math.min(1, volume));
     if (this.gainNode && this.currentOscillator) {
-      this.gainNode.gain.setValueAtTime(this.volume * 0.1, this.audioContext.currentTime);
+      this.gainNode.gain.setValueAtTime(this.volume * 0.2, this.audioContext.currentTime);
     }
   }
 
