@@ -1,13 +1,16 @@
 class AudioManager {
   private static instance: AudioManager;
   private audioContext: AudioContext | null = null;
-  private sounds: Map<string, AudioBuffer> = new Map();
+  private currentOscillator: OscillatorNode | null = null;
+  private gainNode: GainNode | null = null;
   private volume: number = 0.5;
   private isMuted: boolean = false;
 
   private constructor() {
     try {
       this.audioContext = new AudioContext();
+      this.gainNode = this.audioContext.createGain();
+      this.gainNode.connect(this.audioContext.destination);
     } catch (error) {
       console.warn('Web Audio API is not supported in this browser');
     }
@@ -20,44 +23,81 @@ class AudioManager {
     return AudioManager.instance;
   }
 
-  async loadSound(name: string, url: string): Promise<void> {
-    if (!this.audioContext) return;
-
-    try {
-      const response = await fetch(url);
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-      this.sounds.set(name, audioBuffer);
-    } catch (error) {
-      console.warn(`Failed to load sound: ${name}`, error);
+  private stopCurrentSound() {
+    if (this.currentOscillator) {
+      try {
+        this.currentOscillator.stop();
+        this.currentOscillator.disconnect();
+      } catch (error) {
+        console.warn('Error stopping oscillator:', error);
+      }
+      this.currentOscillator = null;
     }
   }
 
-  async playSound(name: string): Promise<void> {
-    if (!this.audioContext || !this.sounds.has(name) || this.isMuted) return;
+  playSound(type: 'inhale' | 'hold' | 'exhale'): void {
+    if (!this.audioContext || !this.gainNode || this.isMuted) return;
+
+    this.stopCurrentSound();
 
     try {
-      const source = this.audioContext.createBufferSource();
-      const gainNode = this.audioContext.createGain();
+      this.currentOscillator = this.audioContext.createOscillator();
       
-      source.buffer = this.sounds.get(name)!;
-      gainNode.gain.value = this.volume;
+      // Set frequency based on the breathing phase
+      switch (type) {
+        case 'inhale':
+          this.currentOscillator.frequency.setValueAtTime(396, this.audioContext.currentTime); // G4 note
+          break;
+        case 'hold':
+          this.currentOscillator.frequency.setValueAtTime(417, this.audioContext.currentTime); // G#4 note
+          break;
+        case 'exhale':
+          this.currentOscillator.frequency.setValueAtTime(352, this.audioContext.currentTime); // F4 note
+          break;
+      }
+
+      // Use sine wave for a smoother, more meditative sound
+      this.currentOscillator.type = 'sine';
       
-      source.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-      
-      source.start(0);
+      // Apply smooth fade in
+      this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+      this.gainNode.gain.linearRampToValueAtTime(
+        this.volume * 0.2, // Reduce volume for comfort
+        this.audioContext.currentTime + 0.1
+      );
+
+      this.currentOscillator.connect(this.gainNode);
+      this.currentOscillator.start();
     } catch (error) {
-      console.warn(`Failed to play sound: ${name}`, error);
+      console.warn('Error playing sound:', error);
+    }
+  }
+
+  stopSound(): void {
+    if (!this.gainNode) return;
+
+    // Smooth fade out
+    try {
+      this.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.1);
+      setTimeout(() => this.stopCurrentSound(), 100);
+    } catch (error) {
+      console.warn('Error stopping sound:', error);
+      this.stopCurrentSound();
     }
   }
 
   setVolume(volume: number): void {
     this.volume = Math.max(0, Math.min(1, volume));
+    if (this.gainNode && this.currentOscillator) {
+      this.gainNode.gain.setValueAtTime(this.volume * 0.2, this.audioContext.currentTime);
+    }
   }
 
   setMuted(muted: boolean): void {
     this.isMuted = muted;
+    if (muted) {
+      this.stopSound();
+    }
   }
 
   getVolume(): number {
