@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Settings2, ArrowLeft } from "lucide-react";
 import Footer from "@/components/Footer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { audioManager } from "@/utils/audioUtils";
 
 const Index = () => {
   const [isBreathing, setIsBreathing] = useState(false);
@@ -24,21 +23,17 @@ const Index = () => {
       const breathingCycle = () => {
         // Start inhale phase
         setPhase("inhale");
-        audioManager.playSound('inhale');
         
         // Transition to hold phase
         timer = setTimeout(() => {
           setPhase("hold");
-          audioManager.stopSound();
           
           // Transition to exhale phase
           timer = setTimeout(() => {
             setPhase("exhale");
-            audioManager.playSound('exhale');
             
             // Complete cycle
             timer = setTimeout(() => {
-              audioManager.stopSound();
               breathingCycle();
             }, settings.exhaleTime * 1000);
           }, settings.holdTime * 1000);
@@ -50,7 +45,6 @@ const Index = () => {
 
     return () => {
       if (timer) clearTimeout(timer);
-      audioManager.stopSound();
     };
   }, [isBreathing, settings]);
 
